@@ -1,24 +1,53 @@
 {
   "name": "shadcn-starter",
-  "version": "0.1.0",
+  "version": "1.0",
+  "description": "shadcn starter template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/immdraselkhan/shadcn-starter"
+  },
+  "author": {
+    "name": "Md Rasel Khan",
+    "email": "hello@raselkhan.dev",
+    "url": "https://raselkhan.dev"
+  },
+  "bugs": {
+    "email": "hello@raselkhan.dev",
+    "url": "https://github.com/immdraselkhan/shadcn-starter/issues"
+  },
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "rimraf .next && next build",
+    "start": "yarn build && next start",
+    "update@latest": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
+    "upgrade@latest": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.471.0",
+    "next": "15.1.4",
+    "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.4"
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.20",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
