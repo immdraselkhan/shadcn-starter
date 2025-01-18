@@ -1,4 +1,4 @@
-import Constants from "@/utils/constants";
+import { Constants } from "@/utils/constants";
 
 type BodyInit = RequestInit["body"] | Record<string, unknown>;
 
@@ -9,38 +9,37 @@ type RequestOptions = Omit<RequestInit, "body" | "method"> & {
 };
 
 type ApiResponse<T> = {
-  status?: number;
+  status?: number | string;
   success?: boolean;
   message?: string;
   stackTrace?: string | T;
   data?: T;
 };
 
-export default function fetchApi() {
+export const fetchApi = (() => {
   async function _request<T>(
     url: string,
     method: RequestInit["method"],
-    body?: BodyInit,
+    body?: BodyInit | null,
     options?: RequestOptions,
-  ) {
+  ): Promise<ApiResponse<T>> {
     try {
       const headers = new Headers(options?.headers);
-
-      if (!headers.has("Content-Type")) {
+      if (!headers.has("Content-Type") && !(body instanceof FormData)) {
         headers.append("Content-Type", "application/json");
       }
 
-      if (body instanceof Object) body = JSON.stringify(body);
+      const resObj = await fetch(url, {
+        method,
+        body: body && !(body instanceof FormData) ? JSON.stringify(body) : body,
+        headers,
+        ...options,
+      });
 
-      const resJson = await fetch(url, { method, body, headers });
-
-      const response = await resJson.json();
-
-      if (!response.data) response.data = response;
-
-      return response;
+      const response = await resObj.json();
+      return { ...response, data: response.data || response };
     } catch (error) {
-      const errorResponse = {
+      return {
         status: 500,
         success: false,
         message:
@@ -50,48 +49,58 @@ export default function fetchApi() {
           stackTrace: (error instanceof Error && error.stack) || "",
         }),
       };
-      return errorResponse;
     }
   }
 
+  function request<T>(
+    method: RequestInit["method"],
+    url: string,
+    bodyOrOptions?: BodyInit | RequestOptions,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
+    const body =
+      bodyOrOptions &&
+      typeof bodyOrOptions === "object" &&
+      !("headers" in bodyOrOptions)
+        ? bodyOrOptions
+        : undefined;
+
+    const requestOptions =
+      bodyOrOptions &&
+      typeof bodyOrOptions === "object" &&
+      "headers" in bodyOrOptions
+        ? (bodyOrOptions as RequestOptions)
+        : options;
+
+    return _request<T>(url, method, body, requestOptions);
+  }
+
   return {
-    async get<T>(
-      url: string,
-      options?: RequestOptions,
-    ): Promise<ApiResponse<T>> {
-      return _request(url, "GET", undefined, options);
-    },
+    get: <T>(url: string, options?: RequestOptions) =>
+      _request<T>(url, "GET", null, options),
 
-    async post<T>(
+    post: <T>(
       url: string,
-      body: BodyInit,
+      bodyOrOptions?: BodyInit | RequestOptions,
       options?: RequestOptions,
-    ): Promise<ApiResponse<T>> {
-      return _request(url, "POST", body, options);
-    },
+    ) => request<T>("POST", url, bodyOrOptions, options),
 
-    async put<T>(
+    put: <T>(
       url: string,
-      body: BodyInit,
+      bodyOrOptions?: BodyInit | RequestOptions,
       options?: RequestOptions,
-    ): Promise<ApiResponse<T>> {
-      return _request(url, "PUT", body, options);
-    },
+    ) => request<T>("PUT", url, bodyOrOptions, options),
 
-    async patch<T>(
+    patch: <T>(
       url: string,
-      body: BodyInit,
+      bodyOrOptions?: BodyInit | RequestOptions,
       options?: RequestOptions,
-    ): Promise<ApiResponse<T>> {
-      return _request(url, "PATCH", body, options);
-    },
+    ) => request<T>("PATCH", url, bodyOrOptions, options),
 
-    async delete<T>(
+    delete: <T>(
       url: string,
-      body: BodyInit,
+      bodyOrOptions?: BodyInit | RequestOptions,
       options?: RequestOptions,
-    ): Promise<ApiResponse<T>> {
-      return _request(url, "DELETE", body, options);
-    },
+    ) => request<T>("DELETE", url, bodyOrOptions, options),
   };
-}
+})();

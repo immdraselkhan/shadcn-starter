@@ -1,27 +1,27 @@
-"use client";
-
 import { Loader2 } from "lucide-react";
 import { useFormStatus } from "react-dom";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { type ButtonProps, Button } from "@/components/ui/button";
+import * as React from "react";
 
 type LoadingButtonProps = ButtonProps & {
   loading?: boolean;
 };
 
-export default function LoadingButton({
-  loading,
-  children,
-  ...props
-}: LoadingButtonProps) {
-  const { pending } = useFormStatus();
-  const isLoading = loading ?? pending;
+const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(
+  function LoadingButton({ loading, children, ...props }, ref) {
+    const { pending } = useFormStatus();
+    const isLoading = loading ?? pending;
 
-  return (
-    <Button disabled={isLoading} {...props}>
-      <>
-        {isLoading ? "Please wait" : children}
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      </>
-    </Button>
-  );
-}
+    return (
+      <Button ref={ref} disabled={isLoading} {...props}>
+        <>
+          {isLoading ? "Please wait" : children}
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+        </>
+      </Button>
+    );
+  },
+);
+LoadingButton.displayName = "LoadingButton";
+
+export { LoadingButton };

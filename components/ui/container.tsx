@@ -1,14 +1,30 @@
 import { cn } from "@/lib/shadcn/cn";
-import { HTMLAttributes } from "react";
+import * as React from "react";
 
-type ContainerProps = HTMLAttributes<HTMLDivElement> & {
-  as?: "div" | "section" | "nav" | "aside" | "header" | "footer";
+type ContainerProps = React.HTMLAttributes<HTMLDivElement> & {
+  as?:
+    | "article"
+    | "aside"
+    | "figcaption"
+    | "figure"
+    | "footer"
+    | "header"
+    | "main"
+    | "mark"
+    | "nav"
+    | "section"
+    | "summary";
 };
 
-export default function Container({
-  as: Element = "section",
-  className,
-  ...props
-}: ContainerProps) {
-  return <Element className={cn("container mx-auto", className)} {...props} />;
-}
+const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
+  ({ as: Element = "section", className, ...props }, ref) => (
+    <Element
+      className={cn("container mx-auto", className)}
+      ref={ref}
+      {...props}
+    />
+  ),
+);
+Container.displayName = "Container";
+
+export { Container };

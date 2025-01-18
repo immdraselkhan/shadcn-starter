@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { cn } from "@/lib/shadcn/cn";
 import { poppins, shiliguri } from "@/lib/shadcn/fonts";
-import Constants from "@/utils/constants";
+import { Constants } from "@/utils/constants";
 
 export const metadata: Metadata = {
   title: `${Constants.META_NAME} - ${Constants.META_TITLE}`,
@@ -22,11 +22,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className={cn(
-          "bg-background flex min-h-screen flex-col justify-between antialiased",
-        )}
+        className={cn("flex min-h-screen flex-col bg-background antialiased")}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          forcedTheme="light"
+          enableSystem
+        >
           {children}
         </ThemeProvider>
       </body>

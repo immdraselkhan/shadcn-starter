@@ -1,4 +1,4 @@
-export default class Constants {
+export class Constants {
   static META_NAME = "Next App";
   static META_TITLE = "Next.js+shadcn Starter";
   static META_DESCRIPTION = "Next.js with TypeScript, Tailwind CSS, and shadcn";
