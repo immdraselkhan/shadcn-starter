@@ -7,7 +7,7 @@ export function Header() {
     <Container as="header" className="py-4 text-white" lang="bn">
       <Box className="container mx-auto text-center">
         <Typography as="h1" className="text-2xl font-bold">
-          Header Update
+          Header New
         </Typography>
       </Box>
     </Container>
