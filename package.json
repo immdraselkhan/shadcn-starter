@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "rimraf .next && next build",
-    "start": "yarn build > deploy.log 2>&1 && fuser -k ${PORT:-3000}/tcp &>/dev/null || true && next start >> deploy.log 2>&1 &",
+    "start": "yarn build > deploy.log 2>&1 && fuser -k \"${PORT:-3000}\"/tcp >/dev/null 2>&1 || true && (next start >> deploy.log 2>&1 &)",
     "update@latest": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
     "upgrade@latest": "yarn upgrade-interactive --latest"
   },
